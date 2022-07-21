@@ -1,13 +1,18 @@
-// Some stupid rigidbody based movement by Dani
-
 using System;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class PlayerMovement : MonoBehaviour {
 
     //Assingables
     public Transform playerCam;
     public Transform orientation;
+    public Graphic DashBarL;
+    public Graphic DashBarR;
+    public Color NotUsed; 
+    public Color Used;
+
     
     //Other
     private Rigidbody rb;
@@ -38,6 +43,10 @@ public class PlayerMovement : MonoBehaviour {
     private float jumpCooldown = 0.25f;
     public float jumpForce = 550f;
     
+
+    //Dashing
+    private float dashForce = 50f;
+    private float dashCount = 2f;
     //Input
     float x, y;
     bool jumping, sprinting, crouching;
@@ -54,6 +63,12 @@ public class PlayerMovement : MonoBehaviour {
         playerScale =  transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = true;
+
+        NotUsed = Color.white;
+        Used = Color.black;
+        DashBarL.color = NotUsed;
+        DashBarR.color = NotUsed;
+
     }
 
     
@@ -69,12 +84,45 @@ public class PlayerMovement : MonoBehaviour {
     /// <summary>
     /// Find user input. Should put this in its own class but im lazy
     /// </summary>
-    private void MyInput() {
+    private void MyInput() { 
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
         jumping = Input.GetButton("Jump");
         crouching = Input.GetKey(KeyCode.LeftControl);
       
+    //dashing
+        if (Input.GetMouseButtonDown(1) | Input.GetKeyDown(KeyCode.LeftShift)) {
+        Dash();
+        
+        if(dashCount == 1){
+        //Change color of bar from white to black 
+            DashBarL.color = Used;
+        }
+
+        if (dashCount == 0){
+            DashBarR.color = Used;
+        }
+         
+
+    }
+        if(grounded){
+            dashCount = 2;
+            //Change color of both bars back to white 
+            DashBarL.color = NotUsed;
+            DashBarR.color = NotUsed;
+        }
+
+    void Dash() {
+        if(dashCount > 0){
+            rb.AddForce( orientation.transform.forward * dashForce, ForceMode.Impulse );
+            dashCount -= 1;
+        }
+        
+    }
+
+       
+
+
         //Crouching
         if (Input.GetKeyDown(KeyCode.LeftControl))
             StartCrouch();

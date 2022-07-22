@@ -6,8 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-public void PlayGame()
+    public void PlayGame()
     {
-    SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0);
+    }
+
+    public void ExitGame()
+    {
+        #if UNITY_STANDALONE
+            Application.Quit();
+        #endif
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #endif
     }
 }

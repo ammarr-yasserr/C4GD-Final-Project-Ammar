@@ -11,7 +11,6 @@ public class PlaygroundRespawn : MonoBehaviour
     private void OnTriggerEnter (Collider other) {
         if (other.CompareTag("Player")) {
 
-            Debug.Log("Collided");
 
             grappling.StopGrapple();
             player.transform.position = respawnPoint.transform.position;
